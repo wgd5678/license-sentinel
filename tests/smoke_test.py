@@ -15,8 +15,8 @@ SRC = Path(__file__).resolve().parent.parent / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from license_sentinel.collectors import collect  # noqa: E402
-from license_sentinel.licenses import (  # noqa: E402
+from license_sentinel.collectors import collect
+from license_sentinel.licenses import (
     Category,
     Context,
     Verdict,
@@ -24,7 +24,7 @@ from license_sentinel.licenses import (  # noqa: E402
     evaluate,
     normalize_context,
 )
-from license_sentinel.report import render_notices  # noqa: E402
+from license_sentinel.report import render_notices
 
 
 # --------------------------------------------------------------------------
@@ -204,7 +204,7 @@ def main() -> int:
     for test in TESTS:
         try:
             test()
-        except Exception:
+        except Exception:  # noqa: BLE001 - report the failure, do not abort the run
             failures += 1
             print(f"FAIL  {test.__name__}")
             traceback.print_exc()

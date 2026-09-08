@@ -145,6 +145,11 @@ def render_audit(result: AuditResult) -> str:
     return "\n".join(lines)
 
 
+def _md_cell(value: str) -> str:
+    """Escape a value so it cannot break out of its Markdown table cell."""
+    return value.replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+
+
 def render_notices(
     dependencies: list[Dependency],
     project_name: str | None = None,
@@ -167,16 +172,19 @@ def render_notices(
         "",
     ]
 
-    for ecosystem in ("python", "npm"):
-        deps = sorted(grouped.get(ecosystem, []), key=lambda d: d.name.lower())
+    headings: dict[str, str] = {"python": "Python dependencies", "npm": "npm dependencies"}
+    order: list[str] = [e for e in ("python", "npm") if e in grouped]
+    order += sorted(e for e in grouped if e not in headings)
+    for ecosystem in order:
+        deps = sorted(grouped[ecosystem], key=lambda d: d.name.lower())
         if not deps:
             continue
-        heading = "Python dependencies" if ecosystem == "python" else "npm dependencies"
+        heading = headings.get(ecosystem, f"{ecosystem} dependencies")
         lines += [f"## {heading}", "", "| Package | Version | License |", "|---|---|---|"]
         for dep in deps:
             version = dep.version or "-"
             lic = dep.license or "UNKNOWN"
-            lines.append(f"| {dep.name} | {version} | {lic} |")
+            lines.append(f"| {_md_cell(dep.name)} | {_md_cell(version)} | {_md_cell(lic)} |")
         lines.append("")
 
     unknown = [d for d in dependencies if not d.license]

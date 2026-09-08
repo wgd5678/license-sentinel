@@ -18,7 +18,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from license_sentinel.server import (  # noqa: E402
+from license_sentinel.server import (
     audit_project,
     check_package,
     generate_notices,
@@ -29,16 +29,11 @@ from license_sentinel.server import (  # noqa: E402
 def build_fixture(root: Path) -> None:
     """A small project with one dependency in each interesting category."""
     (root / "requirements.txt").write_text(
-        "\n".join(
-            [
-                "# pinned and permissive",
-                "flask==3.0.0",
-                "requests>=2.31.0",
-                "# strong copyleft",
-                "some-gpl-helper==1.2.3",
-                "",
-            ]
-        ),
+        "# pinned and permissive\n"
+        "flask==3.0.0\n"
+        "requests>=2.31.0\n"
+        "# strong copyleft\n"
+        "some-gpl-helper==1.2.3\n",
         encoding="utf-8",
     )
     (root / "pyproject.toml").write_text(

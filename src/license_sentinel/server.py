@@ -17,7 +17,7 @@ from typing import Any
 from .licenses import Verdict, evaluate, normalize_context
 from .report import audit, render_audit, write_notices
 
-__all__ = ["audit_project", "check_package", "generate_notices", "pre_release_license_review", "main", "mcp"]
+__all__ = ["audit_project", "check_package", "generate_notices", "main", "mcp", "pre_release_license_review"]
 
 SERVER_NAME = "license-sentinel"
 
@@ -37,7 +37,7 @@ def _load_server_class() -> tuple[Any, str | None]:
     for module_name, attr in candidates:
         try:
             module = importlib.import_module(module_name)
-        except Exception:
+        except Exception:  # noqa: BLE001,S112 - probing for an optional dependency
             continue
         klass = getattr(module, attr, None)
         if klass is not None:
@@ -55,7 +55,7 @@ def _register(fn):
         return fn
     try:
         return mcp.tool()(fn)
-    except Exception:  # pragma: no cover - defensive against SDK changes
+    except Exception:  # noqa: BLE001 - defensive against SDK changes; tool still works
         return fn
 
 
@@ -92,7 +92,7 @@ def audit_project(path: str = ".", context: str = "proprietary") -> str:
         return _error(f"{path} is not a directory")
     try:
         result = audit(root, ctx)
-    except Exception as exc:  # never crash the client on a bad project layout
+    except Exception as exc:  # noqa: BLE001 - never crash the client on a bad layout
         return _error(f"could not scan {path}: {exc}")
     return render_audit(result)
 
@@ -104,8 +104,8 @@ def check_package(names: str | list[str], context: str = "proprietary") -> str:
         names: Package or license strings to check. Accepts the messy real-world
             forms: ``AGPL-3.0``, ``BUSL-1.1``, ``GPLv3``, ``Apache License 2.0``,
             ``MIT OR Apache-2.0``, or a comma-separated string of any of these.
-            Package names are resolved against what is installed in ``path`` when
-            possible, otherwise the string itself is classified.
+            These are license strings, not package lookups: to audit what is
+            actually installed in a project directory, use ``audit_project``.
         context: Distribution context, see ``audit_project``.
 
     Returns:
@@ -124,7 +124,7 @@ def check_package(names: str | list[str], context: str = "proprietary") -> str:
     if not items:
         return _error("no package names given")
 
-    verdicts = {Verdict.BLOCK: [], Verdict.REVIEW: [], Verdict.CLEAN: []}
+    verdicts: dict[Verdict, list[str]] = {Verdict.BLOCK: [], Verdict.REVIEW: [], Verdict.CLEAN: []}
     lines: list[str] = []
     for item in items:
         verdict, lic, reason = evaluate(item, ctx)
@@ -134,10 +134,12 @@ def check_package(names: str | list[str], context: str = "proprietary") -> str:
 
     header = [
         f"license check ({ctx.value})",
-        f"{len(items)} checked: "
-        f"{len(verdicts[Verdict.BLOCK])} BLOCK, "
-        f"{len(verdicts[Verdict.REVIEW])} REVIEW, "
-        f"{len(verdicts[Verdict.CLEAN])} CLEAN",
+        (
+            f"{len(items)} checked: "
+            f"{len(verdicts[Verdict.BLOCK])} BLOCK, "
+            f"{len(verdicts[Verdict.REVIEW])} REVIEW, "
+            f"{len(verdicts[Verdict.CLEAN])} CLEAN"
+        ),
         "",
     ]
     return "\n".join(header + lines)
@@ -191,7 +193,7 @@ generate_notices = _register(generate_notices)
 if mcp is not None:
     try:
         pre_release_license_review = mcp.prompt()(pre_release_license_review)
-    except Exception:  # pragma: no cover - prompt API differs across versions
+    except Exception:  # noqa: BLE001,S110 - prompt API differs across SDK versions
         pass
 
 

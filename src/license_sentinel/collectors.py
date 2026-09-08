@@ -31,7 +31,7 @@ try:  # Python 3.11+
 except ModuleNotFoundError:  # pragma: no cover - requires-python is >=3.11
     tomllib = None  # type: ignore[assignment]
 
-__all__ = ["Dependency", "collect", "normalize_name", "SCAN_CURRENT_ENV_FLAG"]
+__all__ = ["SCAN_CURRENT_ENV_FLAG", "Dependency", "collect", "normalize_name"]
 
 SCAN_CURRENT_ENV_FLAG = "LICENSE_SENTINEL_SCAN_CURRENT_ENV"
 
@@ -94,7 +94,7 @@ def _current_env_paths() -> set[Path]:
             value = sysconfig.get_paths().get(key)
             if value:
                 paths.add(Path(value).resolve())
-    except Exception:  # pragma: no cover - defensive
+    except Exception:  # noqa: BLE001,S110 - probing interpreter layout must never fail
         pass
     return paths
 
@@ -232,8 +232,8 @@ def _collect_pyproject(root: Path) -> list[Dependency]:
         return []
     try:
         data = tomllib.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return []  # a broken pyproject must not fail the whole audit
+    except Exception:  # noqa: BLE001 - a broken pyproject must not fail the whole audit
+        return []
 
     deps: list[Dependency] = []
     project = data.get("project", {}) or {}
@@ -305,7 +305,7 @@ def _license_from_package_json(data: dict) -> str | None:
 def _read_package_json(path: Path) -> dict | None:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception:  # noqa: BLE001 - one unreadable package.json is not fatal
         return None
     return data if isinstance(data, dict) else None
 

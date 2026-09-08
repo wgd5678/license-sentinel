@@ -20,12 +20,12 @@ from dataclasses import dataclass
 from enum import Enum
 
 __all__ = [
-    "Category",
-    "Verdict",
-    "Context",
-    "License",
-    "Finding",
     "CONTEXTS",
+    "Category",
+    "Context",
+    "Finding",
+    "License",
+    "Verdict",
     "classify",
     "evaluate",
     "normalize_context",
@@ -464,4 +464,7 @@ def evaluate(
     suffix = " (resolved from a multi-license expression)" if lic.expression else ""
     if verdict is Verdict.CLEAN:
         return verdict, lic, f"{lic.id} is fine when distributing as {ctx.value}{suffix}"
-    return verdict, lic, f"{lic.id} is {_REASONS[ctx][lic.category]}{suffix}"
+    # A rule can exist without a matching explanation; degrade to a generic ask
+    # rather than raising inside a tool call.
+    reason = _REASONS.get(ctx, {}).get(lic.category) or "flagged for this context: have a human confirm the terms"
+    return verdict, lic, f"{lic.id} is {reason}{suffix}"
