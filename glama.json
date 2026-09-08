@@ -1,0 +1,50 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "maintainers": ["wgd5678"],
+  "name": "license-sentinel",
+  "description": "Audit Python and npm dependency licenses for compliance before you ship. Flags GPL/AGPL/SSPL, source-available (BUSL/Elastic) and non-commercial licenses against how you distribute your product.",
+  "license": "MIT",
+  "homepage": "https://github.com/wgd5678/license-sentinel",
+  "documentation": "https://github.com/wgd5678/license-sentinel#readme",
+  "runtime": "python",
+  "transport": ["stdio"],
+  "install": {
+    "command": "uvx",
+    "args": ["license-sentinel"]
+  },
+  "start": {
+    "command": "license-sentinel"
+  },
+  "tools": [
+    {
+      "name": "audit_project",
+      "description": "Scan a project's dependencies and report licensing risk against your distribution context."
+    },
+    {
+      "name": "check_package",
+      "description": "Check a license string (or several joined by AND/OR) against your distribution context."
+    },
+    {
+      "name": "generate_notices",
+      "description": "Write a THIRD-PARTY-NOTICES.md attribution document for the project's dependencies."
+    }
+  ],
+  "tags": [
+    "license",
+    "compliance",
+    "spdx",
+    "dependencies",
+    "audit",
+    "sbom",
+    "python",
+    "npm",
+    "mcp"
+  ],
+  "attributes": [
+    "category:legal-compliance",
+    "category:developer-tools",
+    "category:security",
+    "hosting:self-hosted",
+    "license:mit"
+  ]
+}
