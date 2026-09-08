@@ -3,8 +3,7 @@
 <!-- mcp-name: io.github.wgd5678/license-sentinel -->
 <!-- invisible on GitHub; the official MCP Registry validator reads it to prove this package is yours -->
 
-[![License](https://glama.ai/mcp/servers/wgd5678/license-sentinel/badges/license.svg)](https://glama.ai/mcp/servers/wgd5678/license-sentinel)
-[![Score](https://glama.ai/mcp/servers/wgd5678/license-sentinel/badges/score.svg)](https://glama.ai/mcp/servers/wgd5678/license-sentinel)
+[![wgd5678/license-sentinel MCP server](https://glama.ai/mcp/servers/wgd5678/license-sentinel/badges/score.svg)](https://glama.ai/mcp/servers/wgd5678/license-sentinel)
 
 **Audit Python and npm dependency licenses for compliance before you ship — an MCP server for AI coding agents.**
 
