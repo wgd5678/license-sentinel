@@ -1,0 +1,22 @@
+{
+  "_comment": "Template for the official MCP Registry. Run `mcp-publisher init` to regenerate with the current schema version, then fill in name/repository before publishing.",
+  "name": "io.github.wgd5678/license-sentinel",
+  "description": "Audit Python and npm dependency licenses for compliance before you ship. Flags GPL/AGPL/SSPL, source-available (BUSL/Elastic) and non-commercial licenses against how you distribute your product.",
+  "status": "active",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/wgd5678/license-sentinel",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "license-sentinel",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
